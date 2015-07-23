@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<f:view locale="#{language.localeCode}">
+	
+		<h:head>
+			<f:loadBundle var="msg" basename="com.adms.msg.cs.csMsg"/>
+		</h:head>
+	
+		<h:body>
+			<p:dataTable id="dataTableLogHist" lazy="true"
+				var="complain" value="#{policyServiceView.complainLogModel}"
+				paginator="true" rows="#{policyServiceView.rowPerPage}"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+				paginatorPosition="bottom"
+				rowIndexVar="idx">
+			
+				<p:column headerText="COL_1">
+					<h:outputLabel value="#{complain.callDateTime}">
+						<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+					</h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_2">
+					<h:outputLabel value="#{complain.policyInfo.policyId}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_3">
+					<h:outputLabel value="#{complain.changedName}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_4">
+					<h:outputLabel value="#{complain.changedCitizenId}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_5">
+					<h:outputLabel value="#{complain.changedGender}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_6">
+					<h:outputLabel value="#{complain.changedBirthDate}">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="#{policyServiceView.timeZone}"/>
+					</h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_7">
+					<h:outputLabel value="#{complain.changedMobileNo}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_8">
+					<h:outputLabel value="#{complain.channel.value}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_9">
+					<h:outputLabel value="#{complain.subCategory.callLogDetailValue.value}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_10">
+					<h:outputLabel value="#{complain.callResult.value}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="COL_11">
+					<h:outputLabel value="#{complain.cancelReason.value}"></h:outputLabel>
+				</p:column>
+			
+			</p:dataTable>
+		</h:body>
+	
+	</f:view>
+
+</ui:composition>

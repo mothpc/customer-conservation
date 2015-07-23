@@ -1,0 +1,98 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/templates/mainTemplate.xhtml">
+
+	<ui:define name="head">
+		<f:loadBundle var="msg" basename="com.adms.msg.cs.csMsg"/>
+		<title>#{msg['txt.header']}</title>
+		
+		<style>
+			.header {font-size: 25px !important; font:bold;}
+			.grid-no-border > div {border: 0;}
+			.grid-separate-less > div > div {border: 0 !important;}
+			.txt-col {float:left;min-width:160px;width:25%;}
+			.input-col {float:left; width:auto;}
+			.w250 {width:250px;}
+			.input-width {width:90%;}
+		</style>
+	</ui:define>
+	
+	<ui:define name="headerCenterContent">
+		<div style="width:auto;margin:0 auto;">
+			<p:outputLabel value="#{msg['txt.header']}" styleClass="header" />
+		</div>
+	</ui:define>
+	
+	<ui:define name="content">
+		
+		<h:form id="frmMain">
+			<p:panel id="dataPanel" header="#{msg['table.1.header']}" style="margin-top:10px;margin-bottom:0.5em;">
+				<p:panelGrid id="mainGrid" columns="3" layout="grid" styleClass="grid-no-border">
+					<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" styleClass="grid-no-border grid-separate-less">
+						<p:outputLabel value="#{msg['table.1.1.1']}" for="campaignCode"/>
+						<p:inputText id="campaignCode" styleClass="input-width" readonly="true"></p:inputText>
+						
+						<p:outputLabel value="#{msg['table.1.1.2']}" for="policyNo"/>
+						<p:inputText id="policyNo" styleClass="input-width"></p:inputText>
+						
+						<p:outputLabel value="#{msg['table.1.1.3']}" for="inceptionDate"/>
+						<p:inputText id="inceptionDate" styleClass="input-width" readonly="true"/>
+					</p:panelGrid>
+					
+					<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" styleClass="grid-no-border grid-separate-less">
+						
+						<p:outputLabel value="#{msg['table.1.2.1']}" for="insuredName"/>
+						<p:inputText id="insuredName" styleClass="input-width"
+							readonly="true">
+						</p:inputText>
+						
+						<p:outputLabel value="#{msg['table.1.2.2']}" for="placeOfBirth"/>
+						<p:inputText id="placeOfBirth" styleClass="input-width" readonly="true"/>
+					</p:panelGrid>
+					
+					<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" styleClass="grid-no-border grid-separate-less">
+						<p:outputLabel value="#{msg['table.1.3.1']}" for="policyIssueDate"/>
+						<p:inputText id="policyIssueDate" styleClass="input-width" readonly="true">
+							<f:convertDateTime pattern="dd/MM/yyyy"></f:convertDateTime>
+						</p:inputText>
+					
+						<p:outputLabel value="#{msg['table.1.3.2']}" for="premiumPTD"/>
+						<p:inputText id="premiumPTD" styleClass="input-width" readonly="true"/>
+					</p:panelGrid>
+				</p:panelGrid>
+			</p:panel>
+			
+			<h:panelGroup id="actionPanel">
+				<p:commandButton id="searchBtn" value="#{msg['btn.start.search']}" process="@this" icon="ui-icon-search">
+					<p:ajax event="dialogReturn" update="dataPanel, actionPanel"/>
+				</p:commandButton>
+								
+				<p:commandButton id="addCaseBtn" value="#{msg['btn.add.new.case']}" 
+					icon="ui-icon-circle-plus"
+					process="@this" 
+					onclick="PF('addCaseDlg').show();" >
+					<ui:remove><p:ajax event="dialogReturn" /></ui:remove>
+				</p:commandButton>
+				
+				<p:commandButton id="viewBillHistBtn" value="#{msg['btn.view.billing.history']}" disabled="true"/>
+				
+				<p:commandButton id="clearAll" value="Clear" process="@this" update="frmMain">
+					<p:resetInput target="frmMain" />
+				</p:commandButton>
+			</h:panelGroup>
+			
+			<p:panel id="logHistPanel" header="Log History" style="margin-top: 10px;">
+				<ui:include src="/tbl-log-hist.xhtml" />
+			</p:panel>
+			
+			<p:dialog header="Add Case" widgetVar="addCaseDlg" appendTo="@body">
+			
+			</p:dialog>
+		</h:form>
+		
+	</ui:define>
+
+</ui:composition>

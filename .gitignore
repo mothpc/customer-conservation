@@ -57,3 +57,18 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.prefs
+customer-conservation/.settings/.jsdtscope
+*.component
+customer-conservation/.settings/org.eclipse.wst.common.project.facet.core.prefs.xml
+*.container
+customer-conservation/.settings/org.eclipse.wst.common.project.facet.core.xml
+*.name
+*.tern-project
+customer-conservation/.project
+*.classpath
+*.jsfdia
+customer-consvt-dao/.settings/org.eclipse.wst.common.project.facet.core.xml
+*.project
+*.MF
+*.lst
