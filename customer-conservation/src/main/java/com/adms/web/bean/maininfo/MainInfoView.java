@@ -20,7 +20,7 @@ public class MainInfoView extends BaseBean {
 			setModel(new MainInfoModel());
 		}
 	}
-
+	
 	public MainInfoModel getModel() {
 		return model;
 	}

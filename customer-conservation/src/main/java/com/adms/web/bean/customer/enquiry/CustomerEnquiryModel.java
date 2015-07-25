@@ -2,6 +2,8 @@ package com.adms.web.bean.customer.enquiry;
 
 import java.io.Serializable;
 
+import com.adms.entity.cs.Customer;
+
 public class CustomerEnquiryModel implements Serializable {
 
 	private static final long serialVersionUID = -1137407173421271827L;
@@ -10,11 +12,7 @@ public class CustomerEnquiryModel implements Serializable {
 	private final String addCaseDlg = "ADD_CASE_DLG";
 	
 	private String dlgHeaderVal;
-	
-	private String insuredFname;
-	private String insuredLname;
-	private String insuredFullName;
-	private String insuredCitizenId;
+	private Customer customer;
 	
 	public CustomerEnquiryModel() {
 		dlgHeaderVal = "";
@@ -36,42 +34,12 @@ public class CustomerEnquiryModel implements Serializable {
 		return addCaseDlg;
 	}
 
-	public String getInsuredFname() {
-		return insuredFname;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setInsuredFname(String insuredFname) {
-		this.insuredFname = insuredFname;
-	}
-
-	public String getInsuredLname() {
-		return insuredLname;
-	}
-
-	public void setInsuredLname(String insuredLname) {
-		this.insuredLname = insuredLname;
-	}
-
-	public String getInsuredCitizenId() {
-		return insuredCitizenId;
-	}
-
-	public void setInsuredCitizenId(String insuredCitizenId) {
-		this.insuredCitizenId = insuredCitizenId;
-	}
-
-	@Override
-	public String toString() {
-		return "CustomerEnquiryModel [insuredFname=" + insuredFname + ", insuredLname=" + insuredLname
-				+ ", insuredCitizenId=" + insuredCitizenId + "]";
-	}
-
-	public String getInsuredFullName() {
-		return insuredFullName;
-	}
-
-	public void setInsuredFullName(String insuredFullName) {
-		this.insuredFullName = insuredFullName;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 }

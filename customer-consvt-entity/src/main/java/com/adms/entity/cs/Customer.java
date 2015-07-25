@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Formula;
+
 import com.adms.common.domain.BaseAuditDomain;
 
 @Entity
@@ -33,6 +35,9 @@ public class Customer extends BaseAuditDomain {
 	@Column(name="LAST_NAME")
 	private String lastName;
 	
+	@Formula(value="FIRST_NAME + ' ' + LAST_NAME")
+	private String fullName;
+	
 	@Column(name="CITIZEN_ID")
 	private String citizenId;
 	
@@ -48,6 +53,18 @@ public class Customer extends BaseAuditDomain {
 	
 	@Column(name="MARITAL")
 	private String marital;
+	
+	@Column(name="HOME_NO")
+	private String homeNo;
+	
+	@Column(name="MOBILE_NO_1")
+	private String mobileNo1;
+	
+	@Column(name="MOBILE_NO_2")
+	private String mobileNo2;
+	
+	@Column(name="OFFICE_NO")
+	private String officeNo;
 
 	public Long getId() {
 		return id;
@@ -119,6 +136,46 @@ public class Customer extends BaseAuditDomain {
 
 	public void setMarital(String marital) {
 		this.marital = marital;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	public String getHomeNo() {
+		return homeNo;
+	}
+
+	public void setHomeNo(String homeNo) {
+		this.homeNo = homeNo;
+	}
+
+	public String getMobileNo1() {
+		return mobileNo1;
+	}
+
+	public void setMobileNo1(String mobileNo1) {
+		this.mobileNo1 = mobileNo1;
+	}
+
+	public String getMobileNo2() {
+		return mobileNo2;
+	}
+
+	public void setMobileNo2(String mobileNo2) {
+		this.mobileNo2 = mobileNo2;
+	}
+
+	public String getOfficeNo() {
+		return officeNo;
+	}
+
+	public void setOfficeNo(String officeNo) {
+		this.officeNo = officeNo;
 	}
 	
 }
