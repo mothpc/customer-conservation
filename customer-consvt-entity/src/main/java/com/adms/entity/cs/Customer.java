@@ -16,7 +16,7 @@ import org.hibernate.annotations.Formula;
 import com.adms.common.domain.BaseAuditDomain;
 
 @Entity
-@Table(name="CUSTOMER", schema="CS")
+@Table(name="CUSTOMER")
 public class Customer extends BaseAuditDomain {
 
 	private static final long serialVersionUID = 4524373584512075532L;
@@ -35,7 +35,10 @@ public class Customer extends BaseAuditDomain {
 	@Column(name="LAST_NAME")
 	private String lastName;
 	
-	@Formula(value="FIRST_NAME + ' ' + LAST_NAME")
+	@Formula(value = " CONCAT("
+			+ "		UPPER(LEFT(FIRST_NAME, 1)), LOWER(SUBSTRING(FIRST_NAME, 2, LEN(FIRST_NAME))) "
+			+ "		, ' ' "
+			+ "		, UPPER(LEFT(LAST_NAME, 1)), LOWER(SUBSTRING(LAST_NAME, 2, LEN(LAST_NAME)))) ")
 	private String fullName;
 	
 	@Column(name="CITIZEN_ID")
@@ -50,6 +53,12 @@ public class Customer extends BaseAuditDomain {
 	@Column(name="DOB")
 	@Temporal(TemporalType.DATE)
 	private Date dob;
+	
+	@Column(name="NATIONALITY")
+	private String nationality;
+	
+	@Column(name="CITIZENSHIP")
+	private String citizenship;
 	
 	@Column(name="MARITAL")
 	private String marital;
@@ -176,6 +185,30 @@ public class Customer extends BaseAuditDomain {
 
 	public void setOfficeNo(String officeNo) {
 		this.officeNo = officeNo;
+	}
+
+	@Override
+	public String toString() {
+		return "Customer [id=" + id + ", title=" + title + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", fullName=" + fullName + ", citizenId=" + citizenId + ", passportId=" + passportId + ", gender="
+				+ gender + ", dob=" + dob + ", marital=" + marital + ", homeNo=" + homeNo + ", mobileNo1=" + mobileNo1
+				+ ", mobileNo2=" + mobileNo2 + ", officeNo=" + officeNo + "]";
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public String getCitizenship() {
+		return citizenship;
+	}
+
+	public void setCitizenship(String citizenship) {
+		this.citizenship = citizenship;
 	}
 	
 }

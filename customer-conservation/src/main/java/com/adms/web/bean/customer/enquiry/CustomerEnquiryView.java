@@ -1,5 +1,6 @@
 package com.adms.web.bean.customer.enquiry;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -7,24 +8,25 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.view.ViewScoped;
+import javax.faces.bean.ViewScoped;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.primefaces.context.RequestContext;
-import org.springframework.data.domain.PageRequest;
+import org.primefaces.event.SelectEvent;
 
 import com.adms.cs.service.CustomerService;
-import com.adms.entity.cs.ComplainLog;
+import com.adms.cs.service.CustomerYesRecordService;
 import com.adms.entity.cs.Customer;
-import com.adms.web.base.bean.AbstractSearchBean;
+import com.adms.entity.cs.CustomerYesRecord;
+import com.adms.util.MessageUtils;
+import com.adms.web.base.bean.BaseBean;
 import com.adms.web.base.bean.LanguageBean;
-import com.adms.web.base.model.LazyModel;
 
 @ManagedBean
 @ViewScoped
-public class CustomerEnquiryView extends AbstractSearchBean<ComplainLog> {
+public class CustomerEnquiryView extends BaseBean {
 
 	private static final long serialVersionUID = -7189621707509848797L;
 	
@@ -34,19 +36,43 @@ public class CustomerEnquiryView extends AbstractSearchBean<ComplainLog> {
 	@ManagedProperty(value="#{customerService}")
 	private CustomerService customerService;
 	
+	@ManagedProperty(value="#{customerYesRecordService}")
+	private CustomerYesRecordService customerYesRecordService;
+	
 	private ResourceBundle csMsg;
-	private LazyModel<ComplainLog> complainLogModel;
 	private CustomerEnquiryModel model;
 	
 	private String shCitizenId;
 	private String shFirstName;
 	private String shLastName;
+	private Date shDOB;
+	
+	private boolean showLogHistTbl;
+	
+	public CustomerEnquiryView() {
+	}
+	
+	public void onSelectRow(SelectEvent event) {
+		System.out.println("select: " + event.getObject());
+	}
 	
 	@PostConstruct
 	private void init() {
 		csMsg = ResourceBundle.getBundle("com.adms.msg.cs.csMsg", new Locale(language.getLocaleCode()));
+		clearModel();
+		clearSh();
+	}
+	
+	public void clearModel() {
 		model = new CustomerEnquiryModel();
-		setComplainLogModel(null);
+		this.showLogHistTbl = false;
+	}
+	
+	public void clearSh() {
+		shCitizenId = null;
+		shDOB = null;
+		shFirstName = null;
+		shLastName = null;
 	}
 	
 	public void prepDlg(String str) {
@@ -58,53 +84,75 @@ public class CustomerEnquiryView extends AbstractSearchBean<ComplainLog> {
 	}
 	
 	public void doSearch() throws Exception {
-		DetachedCriteria criteria = DetachedCriteria.forClass(Customer.class);
-		if(!StringUtils.isBlank(shCitizenId)) criteria.add(Restrictions.eq("citizenId", shCitizenId));
-		if(!StringUtils.isBlank(shFirstName)) criteria.add(Restrictions.like("firstName", shFirstName.toUpperCase()));
-		if(!StringUtils.isBlank(shLastName)) criteria.add(Restrictions.like("lastName", shLastName.toUpperCase()));
-		
-		List<Customer> list = customerService.findByCriteria(criteria);
-		if(list.isEmpty()) {
-			//TODO: not found
-		} else if(list.size() == 1) {
-			//TODO: found customer 1 records
-		} else {
-			//TODO: found customer more than 1
-		}
-		
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		RequestContext rc = RequestContext.getCurrentInstance();
-		rc.execute("PF('searchDlg').hide();");
-	}
-
-	@Override
-	public List<ComplainLog> search(ComplainLog complainLog, PageRequest pageRequest) {
-		try {
+		
+		if(StringUtils.isBlank(shCitizenId) && StringUtils.isBlank(shFirstName) && StringUtils.isBlank(shLastName)) {
+			rc.execute("PF('searchDlg').jq.effect('shake', {times:5}, 100);");
 			
-			return null;
+			MessageUtils.getInstance().addErrorMessage("msgGrowl", "Please fills at least 1 field.");
+			rc.update("frmMain:msgGrowl");
+		} else {
+			List<Customer> list = findCustomer();
+			
+			if(list.isEmpty()) {
+				MessageUtils.getInstance().addErrorMessage("msgGrowl", "Customer not Found.");
+				rc.update("frmMain:msgGrowl");
+			} else if(list.size() == 1) {
+				model.setCustomer(list.get(0));
+				clearSh();
+				logicPolicyByCus();
+				rc.execute("PF('searchDlg').hide();");
+				rc.update("frmMain");
+			} else {
+				model.setCustomerFounds(list);
+				rc.execute("PF('selectCustomerDlg').show();");
+//				rc.execute("PF('searchDlg').hide();");
+//				rc.update("frmMain");
+			}
+		}
+	}
+	
+	public void onSelectCustomer(SelectEvent event) {
+		clearSh();
+		model.setCustomerFounds(null);
+		model.setCustomerYRs(null);
+		logicPolicyByCus();
+	}
+	
+	public void doVisibleLogHistory() {
+		this.showLogHistTbl = true;
+	}
+	
+	private void logicPolicyByCus() {
+		List<CustomerYesRecord> list = findPolicyByCustomer();
+		if(list != null && !list.isEmpty()) {
+			model.setCustomerYRs(list);
+		}
+	}
+	
+	private List<Customer> findCustomer() {
+		try {
+			DetachedCriteria criteria = DetachedCriteria.forClass(Customer.class);
+			if(!StringUtils.isBlank(shCitizenId)) criteria.add(Restrictions.eq("citizenId", shCitizenId));
+			if(!StringUtils.isBlank(shFirstName)) criteria.add(Restrictions.like("firstName", "%" + shFirstName.trim().toUpperCase() + "%"));
+			if(!StringUtils.isBlank(shLastName)) criteria.add(Restrictions.like("lastName", "%" + shLastName.trim().toUpperCase() + "%"));
+			
+			return customerService.findByCriteria(criteria);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-
-	@Override
-	public Long getTotalCount(ComplainLog complainLog) {
-		
+	
+	private List<CustomerYesRecord> findPolicyByCustomer() {
+		try {
+			DetachedCriteria criteria = DetachedCriteria.forClass(CustomerYesRecord.class);
+			criteria.add(Restrictions.eq("customer.citizenId", this.model.getCustomer().getCitizenId()));
+			return customerYesRecordService.findByCriteria(criteria);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		return null;
-	}
-
-	public LazyModel<ComplainLog> getComplainLogModel() {
-		return complainLogModel;
-	}
-
-	public void setComplainLogModel(LazyModel<ComplainLog> complainLogModel) {
-		this.complainLogModel = complainLogModel;
 	}
 
 	public CustomerEnquiryModel getModel() {
@@ -145,6 +193,26 @@ public class CustomerEnquiryView extends AbstractSearchBean<ComplainLog> {
 
 	public void setShLastName(String shLastName) {
 		this.shLastName = shLastName;
+	}
+
+	public Date getShDOB() {
+		return shDOB;
+	}
+
+	public void setShDOB(Date shDOB) {
+		this.shDOB = shDOB;
+	}
+
+	public void setCustomerYesRecordService(CustomerYesRecordService customerYesRecordService) {
+		this.customerYesRecordService = customerYesRecordService;
+	}
+
+	public boolean isShowLogHistTbl() {
+		return showLogHistTbl;
+	}
+
+	public void setShowLogHistTbl(boolean showLogHistTbl) {
+		this.showLogHistTbl = showLogHistTbl;
 	}
 
 }

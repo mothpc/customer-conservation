@@ -10,11 +10,11 @@ import javax.persistence.Table;
 import com.adms.common.domain.BaseAuditDomain;
 
 @Entity
-@Table(name = "CAMPAIGN", schema="SALES")
+@Table(name = "CAMPAIGN")
 @Cacheable
 public class Campaign extends BaseAuditDomain {
 
-	private static final long serialVersionUID = 9176193335807776394L;
+	private static final long serialVersionUID = -2317187847529467988L;
 
 	@Id
 	@Column(name = "ID")

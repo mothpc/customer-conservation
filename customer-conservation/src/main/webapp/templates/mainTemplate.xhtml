@@ -14,48 +14,70 @@
 				<meta http-equiv="expires" content="0" />
 				<link rel="shortcut icon" href="#{request.contextPath}/resources/image/ico/aegon.ico" />
 			</f:facet>
-			<style>
+			<h:outputStylesheet library="css" name="global.css" />
+			
+			<style type="text/css">
 				body {margin:0px;}
 /* 				body {margin:0px;background-image: url("#{request.contextPath}/resources/image/bg/background.png");background-repeat:repeat;background-position:center;} */
 				.txt-label-shadow {text-shadow: 0em 0.07em rgba(0, 0, 0, 0.2);}
-				.wrapper {height:auto;width:auto;max-width:72.5em; margin:0 auto;padding:0px;border: none;background: transparent;}
+				.box-shadow {box-shadow: 0 0px 1px 0px #5D5D5D;}
+				hr.carved {
+				  clear: both;
+				  float: none;
+				  width: 100%;
+				  height: 2px;
+				  margin: 1.4em 0;
+				  border: none;
+				  background: #ddd;
+				  background-image: -webkit-gradient(
+				      linear,
+				      left top,
+				      left bottom,
+				      color-stop(0.5, rgb(221,221,221)),
+				      color-stop(0.5, rgb(255,255,255))
+				  );
+				  background-image: -moz-linear-gradient(
+				      center top,
+				      rgb(221,221,221) 50%,
+				      rgb(255,255,255) 50%
+				  );
+				}
+				.wrapper {height:auto;width:auto;max-width:72.5em; margin:0 auto;padding:0px;border: none;background: transparent;display:block;}
 				.headerBox {display:block;text-align:center;}
-				.adamsLogo {background-image: url("#{request.contextPath}/resources/image/ADAMS_logo.png"); width:281px; height:90px;");}
-				.adamsLogo-small {background-image: url("#{request.contextPath}/resources/image/ADAMS_logo-small.png"); width:150px; height:48px;");}
+				.header-color{background-color:hsla(0, 0%, 80%, 0.7);}
+				.adamsLogo {background-image: url("#{request.contextPath}/resources/image/ADAMS_logo.png"); width:281px; height:90px;}
+				.adamsLogo-small {background-image: url("#{request.contextPath}/resources/image/ADAMS_logo-small.png"); width:150px; height:48px;}
 				.tableNoBorder {border: none !important; border-style: none !important; background: none;}
-				#btnLang ui {}
 				.submenuLanguage {width:inherit;}
 				.submenuLanguage > a.ui-state-active {background:inherit;}
 				.submenuLanguage .ui-menu {width:10em;}
-				.ui-icon-triangle-1-s {margin-right:0px !important;}
-				.headerContent {display:block;}
-				@media ( max-width :35em ) {
-					.headerContent {display: none !important;}
-				}
+				.normal-menu {display:block;}
 			</style>
-			<h:outputStylesheet library="css" name="global.css" />
 			<ui:insert name="head" />
 		</h:head>
 		
 		<h:body >
+			<style>
+				@media screen and ( max-width :35em ) {
+					.btn-action {width:100%;margin-bottom:5px;}
+				}
+				@media screen and ( max-width :27em ) {
+				}
+			</style>
 			<h:form id="frmHead">
-				<div style="height:7.5em;width:100%;background-color:hsla(116, 100%, 84%, 0.65);display:block;">
+				<div style="height:8em;width:100%;" class="header-color box-shadow normal-menu">
 					<div class="wrapper" >
 						<p:panelGrid id="headTable" style="width:100%;" styleClass="tableNoBorder">
 							<p:row style="border:inherit !important;background:inherit;">
 								<p:column style="width:150px;border:inherit !important;background:inherit;">
-									<ui:remove><div class="adamsLogo-small" style="display: inline-table;"></div></ui:remove>
-									<p:graphicImage value="/resources/image/ADAMS_logo.png" style="width:240px;"/>
+									<div><p:graphicImage value="/resources/image/ADAMS_logo.png" width="240px;"/></div>
 								</p:column>
 								<p:column style="text-align:center;border:inherit !important;background:inherit;">
-									<div class="headerContent" style="">
-										<h:outputText value="Customer Conservation" style="font-size: 2em !important; font-weight:bold;" styleClass="txt-label-shadow"/>
-									</div>
-									<ui:remove><p:outputLabel value="#{msg['txt.header']}" styleClass="header" style="position:absolute;left:0;right:0;margin:auto;"/></ui:remove>
+									
 								</p:column>
 								<p:column style="vertical-align: bottom; text-align: right; width:10em;border:inherit !important;background:inherit;">
-								    <p:commandButton id="btnLang" value="Language" type="button" icon="fa fa-language fa-fw" style="border:none;background:none;" />
-								    <p:tieredMenu overlay="true" trigger="btnLang" my="center top" at="center bottom" 
+									<p:commandButton id="btnLang" value="Language" type="button" icon="fa fa-language fa-fw" styleClass="" style="border:none;background:none;" />
+								    <p:tieredMenu id="tireMenu" overlay="true" trigger="btnLang" my="center top" at="center bottom" 
 								    	model="#{language.languageMenuModel}"
 								    	style="width:10em;" styleClass="menu-language">
 								    </p:tieredMenu>
@@ -64,11 +86,11 @@
 						</p:panelGrid>
 					</div>
 				</div>
-				<div class="wrapper" style="margin-top:-1.2em;display:block;">
+				<div class="wrapper normal-menu" style="margin-top:-1.2em;">
 					<p:menubar style="">
-						<p:menuitem value="Main" icon="fa fa-home fa-lg fa-fw" style="font-weight:bold;" action="/pages/main.jsf?faces-redirect=true"/>
+						<p:menuitem value="Main" containerStyleClass="menu-item" icon="fa fa-home fa-lg fa-fw" style="font-weight:bold;" action="/pages/main.jsf?faces-redirect=true"/>
 						<p:separator style="border:none;width:2px;height:22px;clear:none;margin:4px 6px 0;"/>
-						<p:menuitem value="Customer Enquiry" icon="fa fa-search fa-lg fa-fw" action="/pages/cs/customer-enquiry.jsf?faces-redirect=true"></p:menuitem>
+						<p:menuitem id="menuCusEnq" value="Customer Enquiry" containerStyleClass="menu-item" icon="fa fa-search fa-lg fa-fw" action="/pages/cs/customer-enquiry.jsf?faces-redirect=true"/>
 					</p:menubar>
 				</div>
 			</h:form>

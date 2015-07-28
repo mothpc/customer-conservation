@@ -2,7 +2,7 @@ package com.adms.web.bean.maininfo;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.view.ViewScoped;
+import javax.faces.bean.ViewScoped;
 
 import com.adms.web.base.bean.BaseBean;
 

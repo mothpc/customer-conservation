@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,32 +43,9 @@ public class CustomerYesRecord extends BaseAuditDomain {
 	@Column(name="REFERENCE_NO")
 	private String referenceNo;
 	
-	@Column(name="INSURED_TITLE")
-	private String InsuredTitle;
-	
-	@Column(name="INSURED_FIRST_NAME")
-	private String insuredFirstName;
-	
-	@Column(name="INSURED_LAST_NAME")
-	private String insuredLastName;
-	
-	@Column(name="INSURED_NATIONAL")
-	private String insuredNational;
-	
-	@Column(name="INSURED_CITIZEN_ID")
-	private String insuredCitizenId;
-	
-	@Column(name="INSURED_PASSPORT_ID")
-	private String insuredPassportId;
-	
-	@Column(name="GENDER")
-	private String gender;
-	
-	@Column(name="INSURED_DOB")
-	private String insuredDob;
-	
-	@Column(name="INSURED_MARITAL")
-	private String insuredMarital;
+	@ManyToOne
+	@JoinColumn(name="INSURED_CITIZEN_ID", referencedColumnName="CITIZEN_ID")
+	private Customer customer;
 	
 	@Column(name="INSURED_OCCUPATION")
 	private String insuredOccupation;
@@ -96,7 +75,7 @@ public class CustomerYesRecord extends BaseAuditDomain {
 	@Column(name="INSURED_SUB_DISTRICT")
 	private String insuredSubDistrict;
 	
-	@Column(name="INUSRED_DISTRICT")
+	@Column(name="INSURED_DISTRICT")
 	private String insuredDistrict;
 	
 	@Column(name="INSURED_PROVINCE")
@@ -237,78 +216,6 @@ public class CustomerYesRecord extends BaseAuditDomain {
 
 	public void setReferenceNo(String referenceNo) {
 		this.referenceNo = referenceNo;
-	}
-
-	public String getInsuredTitle() {
-		return InsuredTitle;
-	}
-
-	public void setInsuredTitle(String insuredTitle) {
-		InsuredTitle = insuredTitle;
-	}
-
-	public String getInsuredFirstName() {
-		return insuredFirstName;
-	}
-
-	public void setInsuredFirstName(String insuredFirstName) {
-		this.insuredFirstName = insuredFirstName;
-	}
-
-	public String getInsuredLastName() {
-		return insuredLastName;
-	}
-
-	public void setInsuredLastName(String insuredLastName) {
-		this.insuredLastName = insuredLastName;
-	}
-
-	public String getInsuredNational() {
-		return insuredNational;
-	}
-
-	public void setInsuredNational(String insuredNational) {
-		this.insuredNational = insuredNational;
-	}
-
-	public String getInsuredCitizenId() {
-		return insuredCitizenId;
-	}
-
-	public void setInsuredCitizenId(String insuredCitizenId) {
-		this.insuredCitizenId = insuredCitizenId;
-	}
-
-	public String getInsuredPassportId() {
-		return insuredPassportId;
-	}
-
-	public void setInsuredPassportId(String insuredPassportId) {
-		this.insuredPassportId = insuredPassportId;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	public String getInsuredDob() {
-		return insuredDob;
-	}
-
-	public void setInsuredDob(String insuredDob) {
-		this.insuredDob = insuredDob;
-	}
-
-	public String getInsuredMarital() {
-		return insuredMarital;
-	}
-
-	public void setInsuredMarital(String insuredMarital) {
-		this.insuredMarital = insuredMarital;
 	}
 
 	public String getInsuredOccupation() {
@@ -629,6 +536,14 @@ public class CustomerYesRecord extends BaseAuditDomain {
 
 	public void setEffectiveDate(Date effectiveDate) {
 		this.effectiveDate = effectiveDate;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 	
 }

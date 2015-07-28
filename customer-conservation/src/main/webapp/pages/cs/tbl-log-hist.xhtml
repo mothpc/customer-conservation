@@ -4,23 +4,45 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
+	
+	<style>
+	.custom-btn{}
+	</style>
 
-	<p:dataTable id="dataTableLogHist" lazy="true" var="complain"
-		paginator="true"
-		rows="#{customerEnquiryView.rowPerPage}"
-		paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-		paginatorPosition="bottom" emptyMessage="No Records Found"
-		rowIndexVar="idx"
-		reflow="false"
-		style="margin-top:10px;">
+	<p:effect event="load" type="slide" speed="300" delay="200" for="panelLogHistTbl">
+		<f:param name="direction" value="'right'"/>
+	</p:effect>
+	<p:panel id="panelLogHistTbl" rendered="#{customerEnquiryView.showLogHistTbl}" styleClass="custom-panel" style="padding:0;display:none;" >
 		<f:facet name="header">
-			<h:outputText value="Log History"/>
+			<hr class="carved" style="margin:1em 0em"/>
+			<p:commandButton value="Back" styleClass="btn-action">
+				<p:effect event="click" type="slide" speed="300" for="panelLogHistTbl">
+					<f:param name="direction" value="'right'"/>
+					<f:param name="mode" value="'hide'"/>
+				</p:effect>
+				<p:effect event="click" type="slide" speed="300" delay="200" for="dataTablePolByCus">
+					<f:param name="direction" value="'right'"/>
+					<f:param name="mode" value="'show'"/>
+				</p:effect>
+			</p:commandButton>
+			<p:commandButton value="Add Case" styleClass="btn-action"/>
 		</f:facet>
-		
-		<p:column headerText="#{msg['table.2.1.1']}">
-		
-		</p:column>
-
-	</p:dataTable>
+		<p:dataTable id="dataTableLogHist" lazy="true" var="complain"
+			paginator="true"
+			rows="#{customerEnquiryView.defaultRowPerPage}"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+			paginatorPosition="bottom" emptyMessage="No Record Found"
+			rowIndexVar="idx"
+			reflow="false">
+			<f:facet name="header">
+				<h:outputText value="Log History"/>
+			</f:facet>
+			
+			<p:column headerText="#{msg['table.2.1.1']}">
+			
+			</p:column>
+	
+		</p:dataTable>
+	</p:panel>
 
 </ui:composition>

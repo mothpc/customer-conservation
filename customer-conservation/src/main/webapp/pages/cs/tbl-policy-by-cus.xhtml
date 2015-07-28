@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<h:panelGroup id="panelPolByCus">
+		<p:panel styleClass="custom-panel" style="padding:0;margin-top:5px;" rendered="#{customerEnquiryView.model.customer != null}">
+			<p:effect event="load" type="slide" speed="250">
+				<f:param name="direction" vaue="'up'"/>
+			</p:effect>
+			<hr class="carved" style="margin:1em 0px"/>
+			<p:dataTable id="dataTablePolByCus" lazy="true" 
+				value="#{customerEnquiryView.model.customerYRs}"
+				var="pol"
+				paginator="true"
+				rows="#{customerEnquiryView.defaultRowPerPage}"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+				paginatorPosition="bottom" emptyMessage="No Record Found"
+				rowIndexVar="idx"
+				reflow="false" rendered="#{customerEnquiryView.model.customer != null}"
+				style="">
+				<f:facet name="header">
+					<h:outputText value="Policy"/>
+				</f:facet>
+				
+				<p:column headerText="Campaign">
+					<h:outputText value="#{pol.campaignCode}"/>
+				</p:column>
+				
+				<p:column headerText="Ref No">
+					<h:outputText value="#{pol.referenceNo}" />
+				</p:column>
+				
+				<p:column headerText="Premium">
+					<h:outputText value="#{pol.premium}" />
+				</p:column>
+				
+				<p:column styleClass="center" style="width:30px;">
+					<p:tooltip for="@next" value="Add Case for this row" trackMouse="true" />
+					<p:commandButton icon="fa fa-comments-o fa-lg" actionListener="#{customerEnquiryView.doVisibleLogHistory()}" update="frmMain:panelLogHist">
+						<p:effect type="slide" event="click" speed="300" for="dataTablePolByCus">
+							<f:param name="mode" value="'hide'" />
+						</p:effect>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:panelGroup>
+	
+
+</ui:composition>

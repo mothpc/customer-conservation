@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import com.adms.common.domain.BaseDomain;
 
 @Entity
-@Table(name="CALL_LOG_DETAIL_VALUE", schema="CS")
+@Table(name="CALL_LOG_DETAIL_VALUE")
 public class CallLogDetailValue extends BaseDomain {
 
 	private static final long serialVersionUID = 4361784623878830577L;

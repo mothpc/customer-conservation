@@ -3,6 +3,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
 	template="/templates/mainTemplate.xhtml">
 
 	<ui:define name="head">
@@ -30,8 +31,15 @@
 				border-color: #f0ad4e;
 				color: #FFFFEE;
 			}
-			@media ( max-width :35em ) {
-				.btn-action {width:100%;margin-bottom:5px;}
+			div.custom-panel {border:none;background:none;}
+			div.custom-panel .ui-panel-titlebar {
+				border:none;
+				background:none;
+				padding:0;
+				margin-bottom:5px;
+			}
+			div.custom-panel .ui-panel-content {
+				padding:0;
 			}
 		</style>
 	</ui:define>
@@ -45,10 +53,11 @@
 	<ui:define name="content">
 		
 		<h:form id="frmMain">
-			
 			<ui:param name="searchParam" value="#{customerEnquiryView.model.searchDlg}" />
 			<ui:param name="addCaseParam" value="#{customerEnquiryView.model.addCaseDlg}" />
 			<ui:param name="cus" value="#{customerEnquiryView.model.customer}" />
+			
+			<p:growl id="msgGrowl" globalOnly="false"/>
 					
 			<p:panel id="dataPanel" header="#{msg['table.1.header']}" style="margin-bottom:0.5em;">
 				<p:panelGrid id="mainGrid" columns="2" layout="grid" styleClass="grid-no-border">
@@ -70,8 +79,8 @@
 							<f:convertDateTime pattern="dd/MM/yyyy" timeZone=""/>
 						</p:inputText>
 						
-						<h:outputText value="Marital Status" styleClass=""/>
-						<p:inputText id="insuredMarital" value="#{cus.marital}" styleClass="width-full" readonly="true"/>
+						<h:outputText value="Marital Status" styleClass="capitalized"/>
+						<p:inputText id="insuredMarital" value="#{utilize.lowerCase(cus.marital)}" styleClass="width-full capitalized" readonly="true"/>
 					</p:panelGrid>
 				</p:panelGrid>
 			</p:panel>
@@ -81,63 +90,77 @@
 					icon="ui-icon-search"
 					actionListener="#{customerEnquiryView.prepDlg(searchParam)}"
 					oncomplete="PF('searchDlg').show();"
-					update="@form"
 					styleClass="btn-action">
 					<ui:remove><p:ajax event="dialogReturn" update="dataPanel, actionPanel"/></ui:remove>
 				</p:commandButton>
-								
-				<p:commandButton id="addCaseBtn" value="#{msg['btn.add.new.case']}" process="@this"
-					icon="ui-icon-circle-plus" 
-					actionListener="#{customerEnquiryView.prepDlg(addCaseParam)}"
-					oncomplete="PF('addCaseDlg').show();"
-					update="@form"
-					disabled="#{customerEnquiryView.complainLogModel eq null}"
-					styleClass="btn-action">
-					<ui:remove><p:ajax event="dialogReturn" /></ui:remove>
-				</p:commandButton>
 				
 				<p:commandButton id="clearAll" value="Clear" 
-					icon="fa fa-undo" 
-					process="@this" update="frmMain" styleClass="btn-action" >
+					icon="fa fa-undo" actionListener="#{customerEnquiryView.clearModel()}"
+					process="@this" update="@form" styleClass="btn-action" >
 					<p:resetInput target="@form" />
 				</p:commandButton>
-				
 			</h:panelGroup>
 			
-			<ui:include src="tbl-log-hist.xhtml" />
+			<ui:include src="tbl-policy-by-cus.xhtml" />
 			
+			<h:panelGroup id="panelLogHist">
+				<h:panelGroup rendered="false">
+					<hr class="carved" style="margin:1em 0em"/>
+				</h:panelGroup>
+				<ui:include src="tbl-log-hist.xhtml" />
+			</h:panelGroup>
+			
+			<ui:remove>
+			<!-- ## Dialog Section ## -->
+			</ui:remove>
 			<p:dialog id="searchDlg" widgetVar="searchDlg" 
 				dynamic="true" modal="true" 
+				focus="shCitizenId"
 				resizable="false" maximizable="false" 
-				closable="true" closeOnEscape="true">
+				closable="true" closeOnEscape="false">
 				<p:ajax event="close" update="@form" />
+				<p:defaultCommand target="btnSearchSubmit" />
+				<pe:keyFilter for="shCitizenId" mask="num"/>
 				
 				<f:facet name="header">
 					<h:outputText value="#{msg['modal.search.header.text']}" />
 				</f:facet>
 				
-				<p:focus context="@next"/>
+				<p:focus id="focusSearchDlg" context="@next"/>
 				<h:panelGrid id="searchPanel" columns="2" columnClasses="ui-grid-col-5, ui-grid-col-7" styleClass="dlg-content">
 					<p:outputLabel value="Insured Citizen ID" for="shCitizenId" />
-					<p:inputText id="shCitizenId" value="#{customerEnquiryView.shCitizenId}" style="width:100%;"/>
+					<p:inputText id="shCitizenId" value="#{customerEnquiryView.shCitizenId}" maxlength="13" styleClass="input-width"/>
 					
 					<p:outputLabel value="Insured First Name" for="shInsuredFname"/>
-					<p:inputText id="shInsuredFname" value="#{customerEnquiryView.shFirstName}" style="width:100%;"/>
+					<p:inputText id="shInsuredFname" value="#{customerEnquiryView.shFirstName}" styleClass="input-width"/>
 					
 					<p:outputLabel value="Insured Last Name" for="shInsuredLname"/>
-					<p:inputText id="shInsuredLname" value="#{customerEnquiryView.shLastName}" style="width:100%;"/>
+					<p:inputText id="shInsuredLname" value="#{customerEnquiryView.shLastName}" styleClass="input-width"/>
+					
+					<p:outputLabel value="Insured DOB" for="@next"/>
+					<p:calendar id="shInsuredDOB" value="#{customerEnquiryView.shDOB}" navigator="true" yearRange="c-100:c" maxdate="#{currentDate}" pattern="dd/MM/yyyy" mask="true" />
 				</h:panelGrid>
 				
 				<f:facet name="footer">
 					<div class="dlg-wrapper-footer">
-						<p:commandButton value="Submit" actionListener="#{customerEnquiryView.doSearch()}" 
+						<p:commandButton id="btnSearchSubmit" value="Submit" actionListener="#{customerEnquiryView.doSearch()}" 
 							process="@this, shCitizenId, shInsuredFname, shInsuredLname" 
-							update="@form" 
+							
 							onstart="PF('progressDialog').show();"
 							oncomplete="PF('progressDialog').hide();"/>
 						<p:commandButton value="Cancel" type="button" onclick="PF('searchDlg').hide();"/>
 					</div>
 				</f:facet>
+			</p:dialog>
+			
+			<p:dialog id="selectCustomerDlg" widgetVar="selectCustomerDlg" 
+				dynamic="true" modal="true" position="center"
+				fitViewport="true"
+				style="max-width:40em;">
+				<f:facet name="header">
+					<h:outputText value="Customer Results"/>
+				</f:facet>
+				<ui:include src="dlg-select-customer.xhtml" />
 			</p:dialog>
 			
 			<p:dialog id="addCaseDlg" widgetVar="addCaseDlg" 
@@ -151,7 +174,7 @@
 				</f:facet>
 				
 				<p:panelGrid id="addCasePanel" columns="2" layout="grid" styleClass="dlg-content">
-				
+					
 				</p:panelGrid>
 				
 				<f:facet name="footer">
