@@ -124,6 +124,7 @@ public class CustomerEnquiryView extends BaseBean {
 	}
 	
 	private void logicPolicyByCus() {
+		showLogHistTbl = false;
 		List<CustomerYesRecord> list = findPolicyByCustomer();
 		if(list != null && !list.isEmpty()) {
 			model.setCustomerYRs(list);
